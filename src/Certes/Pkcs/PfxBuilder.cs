@@ -73,8 +73,20 @@ namespace Certes.Pkcs
         /// <returns>The PFX data.</returns>
         public byte[] Build(string friendlyName, string password)
         {
+            return Build(friendlyName, password, false);
+        }
+
+        /// <summary>
+        /// Builds the PFX with specified friendly name.
+        /// </summary>
+        /// <param name="friendlyName">The friendly name.</param>
+        /// <param name="password">The password.</param>
+        /// <param name="useDerEncoding">Encode PFX using DER encoding.</param>
+        /// <returns>The PFX data.</returns>
+        public byte[] Build(string friendlyName, string password, bool useDerEncoding)
+        {
             var keyPair = LoadKeyPair();
-            var store = new Pkcs12StoreBuilder().Build();
+            var store = new Pkcs12StoreBuilder().SetUseDerEncoding(useDerEncoding).Build();
 
             var entry = new X509CertificateEntry(certificate);
             store.SetCertificateEntry(friendlyName, entry);
