@@ -17,6 +17,7 @@
     <PackageIcon>logo.png</PackageIcon>
     <PackageId>CertesDer</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>3.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
