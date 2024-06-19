@@ -1,4 +1,5 @@
-﻿using Certes.Crypto;
+﻿using System.Runtime.ConstrainedExecution;
+using Certes.Crypto;
 
 namespace Certes
 {
@@ -24,18 +25,26 @@ namespace Certes
         /// <summary>
         /// Parse the key from DER encoded data.
         /// </summary>
+        /// <param name="algorithm">The algorithm to use.</param>
         /// <param name="der">The DER encoded data.</param>
         /// <returns>The key restored.</returns>
-        public static IKey FromDer(byte[] der) =>
-            keyAlgorithmProvider.GetKey(der);
+        public static IKey FromDer(KeyAlgorithm algorithm, byte[] der)
+        {
+            var algo = keyAlgorithmProvider.Get(algorithm);
+            return algo.GetKey(der);
+        }
 
         /// <summary>
         /// Parse the key from PEM encoded text.
         /// </summary>
+        /// <param name="algorithm">The algorithm to use.</param>
         /// <param name="pem">The PEM encoded text.</param>
         /// <returns>The key restored.</returns>
-        public static IKey FromPem(string pem) =>
-            keyAlgorithmProvider.GetKey(pem);
+        public static IKey FromPem(KeyAlgorithm algorithm, string pem)
+        {
+            var algo = keyAlgorithmProvider.Get(algorithm);
+            return algo.GetKey(pem);
+        }
 
         /// <summary>
         /// Gets the signer for the given key.

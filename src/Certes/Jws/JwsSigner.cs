@@ -71,7 +71,7 @@ namespace Certes.Jws
 
             var signature = $"{protectedHeaderEncoded}.{payloadEncoded}";
             var signatureBytes = Encoding.UTF8.GetBytes(signature);
-            var signedSignatureBytes = keyPair.GetSigner().SignData(signatureBytes);
+            var signedSignatureBytes = keyPair.SignData(signatureBytes);
             var signedSignatureEncoded = JwsConvert.ToBase64String(signedSignatureBytes);
 
             var body = new JwsPayload

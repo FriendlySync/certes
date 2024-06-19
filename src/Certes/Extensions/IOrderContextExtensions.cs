@@ -25,15 +25,15 @@ namespace Certes
         {
             var builder = await context.CreateCsr(key);
             
-            foreach (var (name, value) in csr.Fields)
-            {
-                builder.AddName(name, value);
-            }
+            //foreach (var (name, value) in csr.Fields)
+            //{
+            //    builder.AddName(name, value);
+            //}
 
-            if (string.IsNullOrWhiteSpace(csr.CommonName))
-            {
-                builder.AddName("CN", builder.SubjectAlternativeNames[0]);
-            }
+            //if (string.IsNullOrWhiteSpace(csr.CommonName))
+            //{
+            //    builder.AddName("CN", builder.SubjectAlternativeNames[0]);
+            //}
 
             return await context.Finalize(builder.Generate());
         }

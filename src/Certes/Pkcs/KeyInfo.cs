@@ -2,9 +2,9 @@
 using Certes.Crypto;
 using Certes.Properties;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.OpenSsl;
-using Org.BouncyCastle.Pkcs;
+//using Org.BouncyCastle.Crypto;
+//using Org.BouncyCastle.OpenSsl;
+//using Org.BouncyCastle.Pkcs;
 
 namespace Certes.Pkcs
 {
@@ -22,25 +22,25 @@ namespace Certes.Pkcs
         [JsonProperty("der")]
         public byte[] PrivateKeyInfo { get; set; }
 
-        /// <summary>
-        /// Reads the key from the given <paramref name="stream"/>.
-        /// </summary>
-        /// <param name="stream">The steam.</param>
-        /// <returns>The key loaded.</returns>
-        public static KeyInfo From(Stream stream)
-        {
-            using (var streamReader = new StreamReader(stream))
-            {
-                var reader = new PemReader(streamReader);
+        ///// <summary>
+        ///// Reads the key from the given <paramref name="stream"/>.
+        ///// </summary>
+        ///// <param name="stream">The steam.</param>
+        ///// <returns>The key loaded.</returns>
+        //public static KeyInfo From(Stream stream)
+        //{
+        //    using (var streamReader = new StreamReader(stream))
+        //    {
+        //        var reader = new PemReader(streamReader);
 
-                if (!(reader.ReadObject() is AsymmetricCipherKeyPair keyPair))
-                {
-                    throw new AcmeException(Strings.ErrorInvalidKeyData);
-                }
+        //        if (!(reader.ReadObject() is AsymmetricCipherKeyPair keyPair))
+        //        {
+        //            throw new AcmeException(Strings.ErrorInvalidKeyData);
+        //        }
 
-                return keyPair.Export();
-            }
-        }
+        //        return keyPair.Export();
+        //    }
+        //}
     }
 
     /// <summary>
@@ -50,45 +50,45 @@ namespace Certes.Pkcs
     {
         private static readonly KeyAlgorithmProvider keyAlgorithmProvider = new KeyAlgorithmProvider();
 
-        /// <summary>
-        /// Saves the key pair to the specified stream.
-        /// </summary>
-        /// <param name="keyInfo">The key information.</param>
-        /// <param name="stream">The stream.</param>
-        public static void Save(this KeyInfo keyInfo, Stream stream)
-        {
-            var keyPair = keyInfo.CreateKeyPair();
-            using (var writer = new StreamWriter(stream))
-            {
-                var pemWriter = new PemWriter(writer);
-                pemWriter.WriteObject(keyPair);
-            }
-        }
+        ///// <summary>
+        ///// Saves the key pair to the specified stream.
+        ///// </summary>
+        ///// <param name="keyInfo">The key information.</param>
+        ///// <param name="stream">The stream.</param>
+        //public static void Save(this KeyInfo keyInfo, Stream stream)
+        //{
+        //    var keyPair = keyInfo.CreateKeyPair();
+        //    using (var writer = new StreamWriter(stream))
+        //    {
+        //        var pemWriter = new PemWriter(writer);
+        //        pemWriter.WriteObject(keyPair);
+        //    }
+        //}
 
-        /// <summary>
-        /// Gets the key pair.
-        /// </summary>
-        /// <param name="keyInfo">The key data.</param>
-        /// <returns>The key pair</returns>
-        internal static AsymmetricCipherKeyPair CreateKeyPair(this KeyInfo keyInfo)
-        {
-            var (_, keyPair) = keyAlgorithmProvider.GetKeyPair(keyInfo.PrivateKeyInfo);
-            return keyPair;
-        }
+        ///// <summary>
+        ///// Gets the key pair.
+        ///// </summary>
+        ///// <param name="keyInfo">The key data.</param>
+        ///// <returns>The key pair</returns>
+        //internal static AsymmetricCipherKeyPair CreateKeyPair(this KeyInfo keyInfo)
+        //{
+        //    var (_, keyPair) = keyAlgorithmProvider.GetKeyPair(keyInfo.PrivateKeyInfo);
+        //    return keyPair;
+        //}
 
-        /// <summary>
-        /// Exports the key pair.
-        /// </summary>
-        /// <param name="keyPair">The key pair.</param>
-        /// <returns>The key data.</returns>
-        internal static KeyInfo Export(this AsymmetricCipherKeyPair keyPair)
-        {
-            var privateKey = PrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair.Private);
+        ///// <summary>
+        ///// Exports the key pair.
+        ///// </summary>
+        ///// <param name="keyPair">The key pair.</param>
+        ///// <returns>The key data.</returns>
+        //internal static KeyInfo Export(this AsymmetricCipherKeyPair keyPair)
+        //{
+        //    var privateKey = PrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair.Private);
 
-            return new KeyInfo
-            {
-                PrivateKeyInfo = privateKey.GetDerEncoded()
-            };
-        }
+        //    return new KeyInfo
+        //    {
+        //        PrivateKeyInfo = privateKey.GetDerEncoded()
+        //    };
+        //}
     }
 }

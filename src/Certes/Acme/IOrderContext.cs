@@ -24,11 +24,18 @@ namespace Certes.Acme
         /// <returns>The order finalized.</returns>
         Task<Order> Finalize(byte[] csr);
         
-        /// <summary>
-        /// Downloads the certificate chain in PEM.
-        /// </summary>
-        /// <param name="preferredChain">The preferred Root Certificate.</param>
-        /// <returns>The certificate chain in PEM.</returns>
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="preferredChain"></param>
+       /// <returns></returns>
         Task<CertificateChain> Download(string preferredChain = null);
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="certPath"></param>
+        /// <returns></returns>
+        Task DownloadCertificateToFile(string certPath);
     }
 }

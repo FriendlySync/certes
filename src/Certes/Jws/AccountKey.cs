@@ -40,7 +40,7 @@ namespace Certes.Jws
                 throw new ArgumentNullException(nameof(keyInfo));
             }
 
-            SignatureKey = KeyFactory.FromDer(keyInfo.PrivateKeyInfo);
+            SignatureKey = KeyFactory.FromDer(KeyAlgorithm.ES256, keyInfo.PrivateKeyInfo);
             signer = SignatureKey.GetSigner();
         }
 

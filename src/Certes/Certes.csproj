@@ -2,7 +2,7 @@
   <Import Project="../../misc/certes.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0;netstandard2.0;net461;</TargetFrameworks>
+    <TargetFrameworks>net5.0;</TargetFrameworks>
     <Authors>Certes Contributors</Authors>
     <Company />
     <Product>Certes ACME Client</Product>
@@ -50,7 +50,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Portable.BouncyCastle" Version="1.8.10" />
+    <PackageReference Include="SshKeyGenerator" Version="1.1.51" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" Condition="'$(TargetFramework)' == 'net461'" />
   </ItemGroup>
 
@@ -71,6 +71,14 @@
   
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <DebugType>Full</DebugType>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net5.0|AnyCPU'">
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net5.0|AnyCPU'">
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
   </PropertyGroup>
 
 </Project>

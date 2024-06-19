@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Certes.Acme.Resource;
@@ -51,28 +52,59 @@ namespace Certes.Acme
         }
 
         /// <summary>
-        /// Downloads the certificate chain in PEM.
-        /// <param name="preferredChain">The preferred Root Certificate</param>
+        /// 
         /// </summary>
-        /// <returns>The certificate chain in PEM.</returns>
+        /// <param name="certPath"></param>
+        /// <returns></returns>
+        public async Task DownloadCertificateToFile (string certPath)
+        {
+            var order = await Resource();
+            var resp = await Context.HttpClient.Post<string>(Context, order.Certificate, null, false);
+
+            File.WriteAllText(certPath, resp.Resource);
+
+            //var defaultChain = new CertificateChain(resp.Resource);
+            //if (defaultChain.MatchesPreferredChain(preferredChain) || !resp.Links.Contains("alternate"))
+            //    return defaultChain;
+
+            //var alternateLinks = resp.Links["alternate"].ToList();
+            //foreach (var alternate in alternateLinks)
+            //{
+            //    resp = await Context.HttpClient.Post<string>(Context, alternate, null, false);
+            //    var chain = new CertificateChain(resp.Resource);
+
+            //    //if (chain.MatchesPreferredChain(preferredChain))
+            //    //    return chain;
+            //}
+
+            //return defaultChain;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="preferredChain"></param>
+        /// <returns></returns>
         public async Task<CertificateChain> Download(string preferredChain = null)
         {
             var order = await Resource();
             var resp = await Context.HttpClient.Post<string>(Context, order.Certificate, null, false);
 
+            //File.WriteAllText(certPath, resp.Resource);
+
             var defaultChain = new CertificateChain(resp.Resource);
-            if (defaultChain.MatchesPreferredChain(preferredChain) || !resp.Links.Contains("alternate"))
-                return defaultChain;
+            //if (defaultChain.MatchesPreferredChain(preferredChain) || !resp.Links.Contains("alternate"))
+            //    return defaultChain;
 
-            var alternateLinks = resp.Links["alternate"].ToList();
-            foreach (var alternate in alternateLinks)
-            {
-                resp = await Context.HttpClient.Post<string>(Context, alternate, null, false);
-                var chain = new CertificateChain(resp.Resource);
+            //var alternateLinks = resp.Links["alternate"].ToList();
+            //foreach (var alternate in alternateLinks)
+            //{
+            //    resp = await Context.HttpClient.Post<string>(Context, alternate, null, false);
+            //    var chain = new CertificateChain(resp.Resource);
 
-                if (chain.MatchesPreferredChain(preferredChain))
-                    return chain;
-            }
+            //    //if (chain.MatchesPreferredChain(preferredChain))
+            //    //    return chain;
+            //}
 
             return defaultChain;
         }

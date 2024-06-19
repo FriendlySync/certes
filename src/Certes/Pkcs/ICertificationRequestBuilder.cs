@@ -7,10 +7,10 @@ namespace Certes.Pkcs
     /// </summary>
     public interface ICertificationRequestBuilder
     {
-        /// <summary>
-        /// Generates the CSR.
-        /// </summary>
-        /// <returns>The CSR data.</returns>
-        byte[] Generate();
+        ///// <summary>
+        ///// Generates the CSR.
+        ///// </summary>
+        ///// <returns>The CSR data.</returns>
+        //byte[] Generate();
     }
 }

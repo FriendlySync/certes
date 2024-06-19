@@ -1,18 +1,19 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Carbon.Acme;
 using Certes.Acme.Resource;
 using Certes.Crypto;
 using Certes.Json;
 using Certes.Jws;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Crypto.Operators;
-using Org.BouncyCastle.Math;
-using Org.BouncyCastle.OpenSsl;
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.X509;
+//using Org.BouncyCastle.Asn1;
+//using Org.BouncyCastle.Asn1.X509;
+//using Org.BouncyCastle.Crypto.Operators;
+//using Org.BouncyCastle.Math;
+//using Org.BouncyCastle.OpenSsl;
+//using Org.BouncyCastle.Security;
+//using Org.BouncyCastle.X509;
 
 namespace Certes
 {
@@ -36,6 +37,13 @@ namespace Certes
         /// The json web key.
         /// </value>
         JsonWebKey JsonWebKey { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="signatureBytes"></param>
+        /// <returns></returns>
+        byte[] SignData(byte[] signatureBytes);
     }
 
     /// <summary>
@@ -43,7 +51,7 @@ namespace Certes
     /// </summary>
     public static class ISignatureKeyExtensions
     {
-        private static readonly DerObjectIdentifier acmeValidationV1Id = new DerObjectIdentifier("1.3.6.1.5.5.7.1.31");
+        //private static readonly DerObjectIdentifier acmeValidationV1Id = new DerObjectIdentifier("1.3.6.1.5.5.7.1.31");
         private static readonly KeyAlgorithmProvider signatureAlgorithmProvider = new KeyAlgorithmProvider();
         private static readonly JsonSerializerSettings thumbprintSettings = JsonUtil.CreateSettings();
 
@@ -57,9 +65,18 @@ namespace Certes
             var jwk = key.JsonWebKey;
             var json = JsonConvert.SerializeObject(jwk, Formatting.None, thumbprintSettings);
             var bytes = Encoding.UTF8.GetBytes(json);
-            var hashed = DigestUtilities.CalculateDigest("SHA256", bytes);
+            var hashed = CalculateDigest(bytes);
 
             return hashed;
+        }
+
+        internal static byte[] CalculateDigest(byte[] input)
+        {
+            Sha256Digest digest = new Sha256Digest();
+            digest.BlockUpdate(input, 0, input.Length);
+            byte[] b = new byte[digest.GetDigestSize()];
+            digest.DoFinal(b, 0);
+            return b;
         }
 
         /// <summary>
@@ -94,55 +111,8 @@ namespace Certes
         public static string DnsTxt(this IKey key, string token)
         {
             var keyAuthz = key.KeyAuthorization(token);
-            var hashed = DigestUtilities.CalculateDigest("SHA256", Encoding.UTF8.GetBytes(keyAuthz));
+            var hashed = CalculateDigest(Encoding.UTF8.GetBytes(keyAuthz));
             return JwsConvert.ToBase64String(hashed);
-        }
-
-        /// <summary>
-        /// Generates the certificate for <see cref="ChallengeTypes.TlsAlpn01" /> validation.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="token">The <see cref="ChallengeTypes.TlsAlpn01" /> token.</param>
-        /// <param name="subjectName">Name of the subject.</param>
-        /// <param name="certificateKey">The certificate key pair.</param>
-        /// <returns>The tls-alpn-01 certificate in PEM.</returns>
-        public static string TlsAlpnCertificate(this IKey key, string token, string subjectName, IKey certificateKey)
-        {
-            var keyAuthz = key.KeyAuthorization(token);
-            var hashed = DigestUtilities.CalculateDigest("SHA256", Encoding.UTF8.GetBytes(keyAuthz));
-
-            var (_, keyPair) = signatureAlgorithmProvider.GetKeyPair(certificateKey.ToDer());
-
-            var signatureFactory = new Asn1SignatureFactory(certificateKey.Algorithm.ToPkcsObjectId(), keyPair.Private, new SecureRandom());
-            var gen = new X509V3CertificateGenerator();
-            var certName = new X509Name($"CN={subjectName}");
-            var serialNo = BigInteger.ProbablePrime(120, new SecureRandom());
-
-            gen.SetSerialNumber(serialNo);
-            gen.SetSubjectDN(certName);
-            gen.SetIssuerDN(certName);
-            gen.SetNotBefore(DateTime.UtcNow);
-            gen.SetNotAfter(DateTime.UtcNow.AddDays(7));
-            gen.SetPublicKey(keyPair.Public);
-
-            // SAN for validation
-            var gns = new[] { new GeneralName(GeneralName.DnsName, subjectName) };
-            gen.AddExtension(X509Extensions.SubjectAlternativeName.Id, false, new GeneralNames(gns));
-
-            // ACME-TLS/1
-            gen.AddExtension(
-                acmeValidationV1Id,
-                true,
-                hashed);
-
-            var newCert = gen.Generate(signatureFactory);
-
-            using (var sr = new StringWriter())
-            {
-                var pemWriter = new PemWriter(sr);
-                pemWriter.WriteObject(newCert);
-                return sr.ToString();
-            }
         }
     }
 }

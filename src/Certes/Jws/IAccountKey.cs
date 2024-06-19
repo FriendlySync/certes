@@ -4,7 +4,6 @@ using Certes.Crypto;
 using Certes.Json;
 using Certes.Pkcs;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Security;
 
 namespace Certes.Jws
 {

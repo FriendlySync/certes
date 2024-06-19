@@ -1,53 +1,30 @@
 ﻿using System;
 using System.Linq;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Crypto.Parameters;
+using System.Security.Cryptography;
 
 namespace Certes.Crypto
 {
-    internal sealed class EllipticCurveSigner : AsymmetricCipherSigner
+    internal sealed class EllipticCurveSigner: ISigner
     {
-        private readonly int fieldSize;
-
-        public EllipticCurveSigner(IKey key, string signingAlgorithm, string hashAlgorithm)
-            : base(key)
+        public EllipticCurveSigner(IKey key)
         {
-            var privKey = Key.KeyPair.Private as ECPrivateKeyParameters;
-            if (privKey == null)
-            {
-                throw new ArgumentException("The given key is not an EC private key.", nameof(key));
-            }
-
-            fieldSize = privKey.Parameters.Curve.FieldSize / 8;
-            SigningAlgorithm = signingAlgorithm;
-            HashAlgorithm = hashAlgorithm;
+            KeyPair = key;
         }
 
-        protected override string SigningAlgorithm { get; }
+        //protected override string SigningAlgorithm { get; }
 
-        protected override string HashAlgorithm { get; }
+        //protected override string HashAlgorithm { get; }
 
-        public override byte[] SignData(byte[] data)
+        private IKey KeyPair { get; }
+
+        public byte[] ComputeHash(byte[] data)
         {
-            var signature = base.SignData(data);
-            var sequence = (Asn1Sequence)Asn1Object.FromByteArray(signature);
+            throw new NotImplementedException();
+        }
 
-            var nums = sequence
-                .OfType<DerInteger>()
-                .Select(i => i.Value.ToByteArrayUnsigned())
-                .ToArray();
-
-            var signatureBytes = new byte[fieldSize * nums.Length];
-
-            for (var i = 0; i < nums.Length; ++i)
-            {
-                Array.Copy(
-                    nums[i], 0, 
-                    signatureBytes, fieldSize * (i + 1) - nums[i].Length, 
-                    nums[i].Length);
-            }
-
-            return signatureBytes;
+        public byte[] SignData(byte[] data)
+        {
+            return KeyPair.SignData(data);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
-using Org.BouncyCastle.Asn1.Pkcs;
-using Org.BouncyCastle.Asn1.X9;
+//using Org.BouncyCastle.Asn1.Pkcs;
+//using Org.BouncyCastle.Asn1.X9;
 
 namespace Certes
 {
@@ -50,21 +50,21 @@ namespace Certes
             return algorithm.ToString();
         }
 
-        internal static string ToPkcsObjectId(this KeyAlgorithm algo)
-        {
-            switch (algo)
-            {
-                case KeyAlgorithm.RS256:
-                    return PkcsObjectIdentifiers.Sha256WithRsaEncryption.Id;
-                case KeyAlgorithm.ES256:
-                    return X9ObjectIdentifiers.ECDsaWithSha256.Id;
-                case KeyAlgorithm.ES384:
-                    return X9ObjectIdentifiers.ECDsaWithSha384.Id;
-                case KeyAlgorithm.ES512:
-                    return X9ObjectIdentifiers.ECDsaWithSha512.Id;
-            }
+        //internal static string ToPkcsObjectId(this KeyAlgorithm algo)
+        //{
+        //    switch (algo)
+        //    {
+        //        case KeyAlgorithm.RS256:
+        //            return PkcsObjectIdentifiers.Sha256WithRsaEncryption.Id;
+        //        case KeyAlgorithm.ES256:
+        //            return X9ObjectIdentifiers.ECDsaWithSha256.Id;
+        //        case KeyAlgorithm.ES384:
+        //            return X9ObjectIdentifiers.ECDsaWithSha384.Id;
+        //        case KeyAlgorithm.ES512:
+        //            return X9ObjectIdentifiers.ECDsaWithSha512.Id;
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
     }
 }
